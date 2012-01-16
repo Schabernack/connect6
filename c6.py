@@ -42,5 +42,10 @@ class MinMax:
 
 	if __name__ == "__main__":
 		game = GameBoard()
-		print(get_gametree_children(game, 'B'))
+		game.put_black(3,3)
+		game.put_black(3,4)
+		game.put_black(3,5)
+		game.put_black(3,6)
+		print game.asses('B')
+		
 	
