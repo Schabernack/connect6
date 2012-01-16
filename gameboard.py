@@ -125,3 +125,28 @@ class GameBoard:
 					pass
 		
 		return resultlist
+
+	#params: gamesituation a c6 board
+	#returns a list gamesituations
+	def get_next_moves(color):
+		board = __board.get_copy()
+		gamelist = []
+		coordinates = []
+
+		for row in range(18):
+			for col in range(18):
+				coordinates.append((row,col))
+		
+		coordinate_tuple = it.product(coordinates, coordinates)
+		for ctuple in coordinate_tuple:
+			if  not board.get_board()[ctuple[0][0]][ctuple[0][1]] and not board.get_board()[ctuple[1][0]][ctuple[1][1]]:		
+				board = gamesituation.get_copy()
+				if color=='B':
+					board.put_black(ctuple[0][0],ctuple[0][1])
+					board.put_black(ctuple[1][0],ctuple[1][1])
+				else:
+					board.put_white(ctuple[0][0],ctuple[0][1])
+					board.put_white(ctuple[1][0],ctuple[1][1])
+			gamelist.append(board)
+			
+		return gamelist

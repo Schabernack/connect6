@@ -13,36 +13,7 @@ class MinMax:
 			alpha = max(alpha, -minimax(child, depth-1))
 		
 		return alpha
-	
-	#params: gamesituation a c6 board
-	#returns a list gamesituations
-	def get_gametree_children(gamesituation, color):
-		game = GameBoard()
-		graph = nx.DiGraph()
-		gamelist = []
-		coordinates = []
-		for row in range(18):
-			for col in range(17):
-				board = gamesituation.get_copy()
-				if  not board.get_board()[row][col] and not board.get_board()[row][col+1]:
-					board.get_board()[row][col]=color
-		for row in range(18):
-			for col in range(18):
-				coordinates.append((row,col))
-		
-		coordinate_tuple = it.product(coordinates, coordinates)
-		for ctuple in coordinate_tuple:
-			if  not board.get_board()[ctuple[0][0]][ctuple[0][1]] and not board.get_board()[ctuple[1][0]][ctuple[1][1]]:		
-				board = gamesituation.get_copy()
-				if color=='B':
-					board.put_black(ctuple[0][0],[ctuple[0][1])
-					board.put_black(ctuple[1][0],[ctuple[1][1])
-				else:
-					board.put_white(ctuple[0][0],[ctuple[0][1])
-					board.put_white(ctuple[1][0],[ctuple[1][1])
-			gamelist.append(board)
-			
-		return gamelist
+
 		
 	def build_game_graph(self, board, depth):
 		graph = nx.DiGraph
@@ -53,6 +24,16 @@ class MinMax:
 		for node in get_gametree_children(board, 'B'):
 			graph.add_node(node)
 			graph.add_edge(board, node)
+
+
+	def span_tree_for_node(self,board,depth):
+		node = Node(board)
+		
+		if depth <= 0:
+			return node
+
+		for b in board.get_next_moves():
+			node.add_child(span_tree_for_node(b,depth-1))
 
 		
 
