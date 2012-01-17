@@ -1,10 +1,11 @@
 import itertools
-from gameboard import GameBoard 
 import datetime
+from gameboard import GameBoard 
 from coord import Coord
+from referee import Referee
 
 
-class Connect6:
+class Player:
 
 	##Todo: Implement alpha-beta pruning
 	def minimax(node, depth):
@@ -29,18 +30,16 @@ class Connect6:
 		
 
 	if __name__ == "__main__":
-		int round = 0
+		ref = Referee()
 		game = GameBoard()
-		game.put_token(Coord(8,8),'B')
+		game.put_token(Coord(9,9),'B')
+		ref.tell_move(Coord(9,9))
 		
-		game.put_token(Coord(0,1),'W')
-		game.put_token(Coord(0,2),'W')
+		m1,m2 = ref.get_next_moves()
+		game.put_token(m1,'W')
+		game.put_token(m2,'W')
 		
-		game.put_token(Coord(0,3),'B')
-		game.put_token(Coord(0,4),'B')
-		
-		game.put_token(Coord(0,5),'W')
-		game.put_token(Coord(0,6),'W')
+		print m1,m2
 
 		game.print_moves()
 
@@ -49,7 +48,7 @@ class Connect6:
 		x = game.get_next_moves('B')
 		for b in x:
 			b.print_board()
-			break
+			
 		
 		print "Time:",datetime.datetime.now()-start
 				
