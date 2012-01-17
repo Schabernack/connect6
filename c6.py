@@ -1,8 +1,10 @@
-import networkx as nx
 import itertools
 from gameboard import GameBoard 
+import datetime
+from coord import Coord
 
-class MinMax:
+
+class Connect6:
 
 	##Todo: Implement alpha-beta pruning
 	def minimax(node, depth):
@@ -13,17 +15,6 @@ class MinMax:
 			alpha = max(alpha, -minimax(child, depth-1))
 		
 		return alpha
-
-		
-	def build_game_graph(self, board, depth):
-		graph = nx.DiGraph
-		graph.add_node(board)
-		if depth <= 0:
-			return graph
-		
-		for node in get_gametree_children(board, 'B'):
-			graph.add_node(node)
-			graph.add_edge(board, node)
 
 
 	def span_tree_for_node(self,board,depth):
@@ -38,12 +29,28 @@ class MinMax:
 		
 
 	if __name__ == "__main__":
+		int round = 0
 		game = GameBoard()
-		get_gametree_children(game, 'B')
-		game.put_black(3,3)
-		game.put_black(3,4)
-		game.put_black(3,5)
-		game.put_black(3,6)
-		print game.asses('B')
+		game.put_token(Coord(8,8),'B')
 		
+		game.put_token(Coord(0,1),'W')
+		game.put_token(Coord(0,2),'W')
+		
+		game.put_token(Coord(0,3),'B')
+		game.put_token(Coord(0,4),'B')
+		
+		game.put_token(Coord(0,5),'W')
+		game.put_token(Coord(0,6),'W')
+
+		game.print_moves()
+
+
+		start = datetime.datetime.now()
+		x = game.get_next_moves('B')
+		for b in x:
+			b.print_board()
+			break
+		
+		print "Time:",datetime.datetime.now()-start
+				
 	

@@ -1,26 +1,43 @@
 import pprint 
 import copy
+from sets import Set
+import itertools as it
+from coord import Coord as Coord
 
 class GameBoard:
 
 	#gezaehlt wird von 1-19
 	__board = None
 
-	def __init__(self, board=[[0]*18 for i in range(18)]):
-		self.__board = board
+	__moves = Set()
+	__taken = Set()
+
+
+	def __init__(self):
+		self.__board = [[0]*19 for i in range(19)]
+		
 
 	def get_copy(self):
 		boardlist = copy.deepcopy(self.__board)
-		foo = GameBoard(boardlist)
-		return foo
+		movelist = copy.deepcopy(self.__moves)
+
+		cp_board = GameBoard()
+		cp_board.__board = boardlist
+		cp_board.__moves = movelist
+		return cp_board
 		
-	
+	def put_token(self,coord,player) :
+		self.__board[coord.row][coord.col] = player
+		self.__taken.add(coord)
+		possible_moves = self.get_nearest_cells(coord)
 
-	def put_black(self,row, column) :
-		self.__board[row-1][column-1]= 'B'
+		self.__moves = self.__moves.union(possible_moves)
+		self.__moves = self.__moves.difference(self.__taken)
 
-	def put_white(self,row,column):
-		self.__board[row-1][column-1]= 'W'
+
+	def print_moves(self):
+		print self.__moves
+		print len(self.__moves)
 	
 	def get_board(self):
 		return self.__board
@@ -50,7 +67,7 @@ class GameBoard:
 			badvalue += self.how_many_drlines(enemycolor)[str(i)]* 2 * i
 			badvalue += self.how_many_dllines(enemycolor)[str(i)]* 2 * i
 
-		return goodvalue -  badvalue
+		return goodvalue - badvalue
 
 	def how_many_vlines(self, color):
 		resultlist = {'2':0, '3':0, '4':0, '5':0}
@@ -128,25 +145,59 @@ class GameBoard:
 
 	#params: gamesituation a c6 board
 	#returns a list gamesituations
-	def get_next_moves(color):
-		board = __board.get_copy()
+	def get_next_moves(self,color):
 		gamelist = []
-		coordinates = []
-
-		for row in range(18):
-			for col in range(18):
-				coordinates.append((row,col))
 		
-		coordinate_tuple = it.product(coordinates, coordinates)
+		coordinate_tuple = self.get_possible_moves()
 		for ctuple in coordinate_tuple:
-			if  not board.get_board()[ctuple[0][0]][ctuple[0][1]] and not board.get_board()[ctuple[1][0]][ctuple[1][1]]:		
-				board = gamesituation.get_copy()
-				if color=='B':
-					board.put_black(ctuple[0][0],ctuple[0][1])
-					board.put_black(ctuple[1][0],ctuple[1][1])
-				else:
-					board.put_white(ctuple[0][0],ctuple[0][1])
-					board.put_white(ctuple[1][0],ctuple[1][1])
+			board = self.get_copy()
+			board.put_token(ctuple[0],color)
+			board.put_token(ctuple[1],color)
+			
 			gamelist.append(board)
 			
 		return gamelist
+
+	## returns possible move-tuples
+	def get_possible_moves(self):
+		p_moves = Set()
+		move_list=list(self.__moves)
+		for i in range(len(self.__moves)):
+			for j in range(len(self.__moves)):
+				if i!=j+i and i+j < len(move_list):
+					p_moves.add((move_list[i],move_list[i+j]))
+		return p_moves
+
+
+
+	def get_nearest_cells(self,c,radius=2):
+		cells = Set()
+		for dist in range(1,radius+1):
+
+			## diagonal neighbours
+			cells.add(Coord(c.row+dist,c.col+dist))
+			cells.add(Coord(c.row+dist,c.col-dist))
+			cells.add(Coord(c.row-dist,c.col+dist))
+			cells.add(Coord(c.row-dist,c.col-dist))
+			
+			## direct neighbours
+			cells.add(Coord(c.row+dist,c.col))
+			cells.add(Coord(c.row-dist,c.col))
+			cells.add(Coord(c.row,c.col+dist))
+			cells.add(Coord(c.row,c.col-dist))
+		
+		return cells
+				
+
+
+
+
+
+
+
+
+
+
+
+
+
