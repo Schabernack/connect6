@@ -2,53 +2,22 @@ import itertools
 import datetime
 from gameboard import GameBoard 
 from coord import Coord
-from referee import Referee
-from node import Node
+from sets import Set
 
 
 class Player:
 	color = None
 	enemy = None
-	game_board = None
-	hor_off_board = None
-	hor_off_rows = []
-	ver_off_board = None
-	ver_off_rows = []
-
-	dle_off_board = None
-	dle_off_rows = []
-
-	dri_off_board = None
-	dri_off_rows = []
-
-
-	hor_def_board = None
-	hor_def_rows = []	
-
-	ver_def_board = None
-	ver_def_rows = []
-
-	dle_def_board = None
-	dle_def_rows = []
-
-	dri_def_board = None
-	dri_def_rows = []
+	board = None
+	off_rows = []
+	def_rows = []
 
 	def __init__(self):
 		self.init_boards()
 
 
 	def init_boards(self):
-		self.game_board = GameBoard()
-		self.hor_off_board = [[0]*19 for i in range(19)]
-		self.ver_off_board = [[0]*19 for i in range(19)]
-		self.dle_off_board = [[0]*19 for i in range(19)]
-		self.dri_off_board = [[0]*19 for i in range(19)]
-		
-		self.hor_def_board = [[0]*19 for i in range(19)]
-		self.ver_def_board = [[0]*19 for i in range(19)]
-		self.dle_def_board = [[0]*19 for i in range(19)]
-		self.dri_def_board = [[0]*19 for i in range(19)]
+		self.board = GameBoard()
 
 
 	def get_next_move(self,message):
@@ -58,95 +27,207 @@ class Player:
 		elif len(message) == 5:
 			self.color = 'L'
 			self.enemy = 'D'
-			coord = (int(message[1:3]),int(message[3:5])
+			coord = Coord(int(message[1:3]),int(message[3:5]))
 			self.put_enemy_stones(coord)
 		elif len(message) == 8:
-			coord1 = int(message[0:2]),int(message[2:4]
-			coord2 = int(message[4:6]),int(message[6:8]
+			coord1 = Coord(int(message[0:2]),int(message[2:4]))
+			coord2 = Coord(int(message[4:6]),int(message[6:8]))
 			self.put_enemy_stones(coord1,coord2)
+
+		self.board.put_token(Coord(1,1),self.color)
+
 		
-		return do_best_move()
 
 
-	def do_best_move():
+	def do_best_move(self):
 		move = ""
-
-		self.adjust_off_board(move)
 
 		return move
 
 
-	def put_enemy_stones(coord1,coord2=None):
-		game_board.put_token(enemy,coord1)
+	def put_enemy_stones(self,coord1,coord2=None):
+		self.board.put_token(coord1,self.enemy)
 		if coord2 != None:
-			game_board.put_token(enemy,coord2)
+			self.board.put_token(coord2,self.enemy)
+	
 
-		self.adjust_def_boards(coord1,coord2)
+'''
+'''
+'''			CHECK OTHER FREE FIELDS FOR VERTICAL ROWS!!!
+'''
+'''
+'''
+
+	def get_horizontal_rows(self):
+		
+		previous_color = ''
+
+		off_row = None
+		def_row = None
+
+		for r in range(19):
+			for c in range(19):
+				token = self.board.get_board()[r][c]
+			
+				## player field
+				if token == self.color:
+					## Extend self.player row
+					if previous_color == self.color:
+						off_row = (off_row[0]+1,off_row[1])
+					## New self.player row
+					else:
+						## self.enemy_row disturbed?
+						if def_row != None:
+							self.def_rows.append(def_row)
+							def_row = None
+
+						off_row = (1,[])
+
+						## Check if previous field is free
+						if c > 0:
+							if self.board.get_board()[r][c-1] == '':
+								off_row = (off_row[0],[(r,c-1)])
+			
+
+				## enemy field
+				elif token == self.enemy:
+					## Extend self.enemy row
+					if previous_color == self.enemy:
+						def_row = (def_row[0]+1,def_row[1])
+					## New self.enemy row
+					else:
+						## self.player row disturbed?
+						if off_row != None:
+							self.off_rows.append(off_row)
+							off_row = None
+						
+						def_row = (1,[])
+						
+						## Check if previous field is free
+						if c > 0:
+							if self.board.get_board()[r][c-1] == '':
+								def_row = (def_row[0],[(r,c-1)])
+						
+						
+				## Free field
+				else:
+					## Any rows disturbed?
+					if off_row != None:
+							off_row[1].append((r,c))
+							self.off_rows.append(off_row)
+							off_row = None
+					if def_row != None:
+							def_row[1].append((r,c))
+							self.def_rows.append(def_row)
+							def_row = None
+
+				
+				previous_color = token
+
+	def get_vertical_rows(self):
+		
+		previous_color = ''
+
+		off_row = None
+		def_row = None
+
+		for c in range(19):
+			for r in range(19):
+				token = self.board.get_board()[r][c]
+
+				## player field
+				if token == self.color:
+					## Extend self.player row
+					if previous_color == self.color:
+						off_row = (off_row[0]+1,off_row[1])
+					## New self.player row
+					else:
+						## self.enemy_row disturbed?
+						if def_row != None:
+							self.def_rows.append(def_row)
+							def_row = None
+
+						off_row = (1,[])
+
+						## Check if previous field is free
+						if c > 0:
+							if self.board.get_board()[r][c-1] == '':
+								off_row = (off_row[0],[(r,c-1)])
+			
+
+				## enemy field
+				elif token == self.enemy:
+					## Extend self.enemy row
+					if previous_color == self.enemy:
+						def_row = (def_row[0]+1,def_row[1])
+					## New self.enemy row
+					else:
+						## self.player row disturbed?
+						if off_row != None:
+							self.off_rows.append(off_row)
+							off_row = None
+						
+						def_row = (1,[])
+						
+						## Check if previous field is free
+						if c > 0:
+							if self.board.get_board()[r][c-1] == '':
+								def_row = (def_row[0],[(r,c-1)])
+						
+						
+				## Free field
+				else:
+					## Any rows disturbed?
+					if off_row != None:
+							off_row[1].append((r,c))
+							self.off_rows.append(off_row)
+							off_row = None
+					if def_row != None:
+							def_row[1].append((r,c))
+							self.def_rows.append(def_row)
+							def_row = None
+
+				
+				previous_color = token
+
+
+	def is_alive(self,row):
+		return True if len(row[1]) > 1 else False
+
+	def is_dead(self,row):
+		return True if len(row[1]) == 0 else False
+
+	def is_sleeping(self,row):
+		return True if len(row[1]) == 1 else False
+					
+	def get_enemy_rows(self):
+		return sorted(self.def_rows, key=lambda number:(number[0], len(number[1])),reverse=True)
+
+	def get_player_rows(self):
+		return sorted(self.off_rows, key=lambda number:(number[0], len(number[1])),reverse=True)
+	
+if __name__ == "__main__":
+	
+	player = Player()
+	player.get_next_move("L0000")
+
+	player.get_horizontal_rows()
+	player.get_vertical_rows()
+
+	player.get_enemy_rows()
+
+	player.board.print_board()
+
+	print "Enemy"
+	for row in player.get_enemy_rows():
+		print row
+
+	print "Me"
+	for row in player.get_player_rows():
+		print row
+	
 
 	
-	def adjust_def_boards(coord1,coord2=None):
-		coords = []
-		coords.append(coord1)
-		if coord2 != None:
-			coords.append(coord2)
-
-		for coord in coords:
-			up = hor_def_board[coord.row+1][coord.col] 		if coord.row+1 < 19		else 0
-			down = hor_def_board[coord.row-1][coord.col]	if coord.row-1 >= 0 	else 0
-			hor_def_board[coord.row][coord.col] = up+down+1
-			
-			left = hor_def_board[coord.row][coord.col-1]		if coord.col-1 >= 0 	else 0
-			right = hor_def_board[coord.row][coord.col+1]		if coord.col+1 < 19 	else 0
-			ver_def_board[coord.row][coord.col] = left+right+1
-
-			up_left = hor_def_board[coord.row+1][coord.col-1]			if coord.row+1 < 19 and coord.col-1 >= 0 	else 0
-			down_right = hor_def_board[coord.row-1][coord.col+1]		if coord.row-1 >= 0 and coord.col+1 < 19 	else 0
-			dri_def_board[coord.row][coord.col] = up_left+up_right+1
-			
-			up_right = hor_def_board[coord.row+1][coord.col+1]			if coord.row+1 < 19 and coord.col+1 < 19 	else 0
-			down_left = hor_def_board[coord.row-1][coord.col-1]			if coord.row-1 >= 0 and coord.col-1 >= 0 	else 0
-			dle_def_board[coord.row][coord.col] = up_right+down_left+1
-
-
-	def adjust_off_boards(coord1,coord2=None):
-		coords = []
-		coords.append(coord1)
-		if coord2 != None:
-			coords.append(coord2)
-
-		for coord in coords:
-			up = hor_off_board[coord.row+1][coord.col] 		if coord.row+1 < 19		else 0
-			down = hor_off_board[coord.row-1][coord.col]	if coord.row-1 >= 0 	else 0
-			hor_off_board[coord.row][coord.col] = 1
-			
-			left = hor_off_board[coord.row][coord.col-1]		if coord.col-1 >= 0 	else 0
-			right = hor_off_board[coord.row][coord.col+1]		if coord.col+1 < 19 	else 0
-			ver_off_board[coord.row][coord.col] = 1
-
-			up_left = hor_off_board[coord.row+1][coord.col-1]			if coord.row+1 < 19 and coord.col-1 >= 0 	else 0
-			down_right = hor_off_board[coord.row-1][coord.col+1]		if coord.row-1 >= 0 and coord.col+1 < 19 	else 0
-			dri_off_board[coord.row][coord.col] = 1
-			
-			up_right = hor_off_board[coord.row+1][coord.col+1]			if coord.row+1 < 19 and coord.col+1 < 19 	else 0
-			down_left = hor_off_board[coord.row-1][coord.col-1]			if coord.row-1 >= 0 and coord.col-1 >= 0 	else 0
-			dle_off_board[coord.row][coord.col] = 1
-			
-		hor_count = 0
-		ver_count = 0
-		dle_count = 0
-		dri_count = 0
-
-		for col in range(19):
-			for row in range(19):
-				r = hor_off_board[row][col]
-				if r = 0:
-					break
-				else:
-					hor_count += 1
-
-
-
-		
 
 
 	
