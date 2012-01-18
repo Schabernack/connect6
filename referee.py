@@ -39,7 +39,7 @@ class Referee:
 
 	def game_over(self):
 		for row in range(len(self.__gameboard)):
-			for col in range(len(self.__gameboard)):
+			for col in range(len(self.__gameboard)[0]):
 				try:
 					#check horizontal
 					foo= self.__gameboard[row][col]

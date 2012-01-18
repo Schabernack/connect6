@@ -1,4 +1,3 @@
-import pprint 
 import copy
 from sets import Set
 import itertools as it
@@ -14,6 +13,16 @@ class GameBoard:
 	def __init__(self):
 		self.__board = [['']*19 for i in range(19)]
 		
+	def print_board(self):
+		for row in range(len(self.__board)):
+			for col in range(len(self.__board[0])):
+				foo = self.__board[row][col]
+				if (foo!=''):
+					print foo,
+				else:
+					print ".",
+			print ""
+			
 
 	def get_copy(self):
 
@@ -25,10 +34,6 @@ class GameBoard:
 	
 	def get_board(self):
 		return self.__board
-
-	def print_board(self):
-		pp = pprint.PrettyPrinter(indent=4)
-		pp.pprint(self.__board)
 
 
 	
