@@ -5,15 +5,12 @@ from coord import Coord
 class Referee:
 	
 	__player = []
-	__moves = Set()
 	__gameboard = None
 
 	def __init__(self):
 		self.__gameboard = [[0]*19 for i in range(19)]
 
-		for row in range(19):
-			for col in range(19):
-				self.__moves.add(Coord(row,col))
+		
 
 	def add_player(self, player):
 		self.__player.append(player)
@@ -41,19 +38,65 @@ class Referee:
 			sys.exit(0)
 
 	def game_over(self):
-		return False
+		for row in range(len(self.__gameboard)):
+			for col in range(len(self.__gameboard)):
+				try:
+					#check horizontal
+					foo= self.__gameboard[row][col]
+					for i in range(6):
+						if(foo!=self.__gameboard[row][col+i]):
+							break
+						elif i==5:
+							return True
+						foo= self.__gameboard[row][col+i]
+
+					#check vertical
+					foo= self.__gameboard[row][col]
+					for i in range(6):
+						if(foo!=self.__gameboard[row+i][col]):
+							break
+						elif i==5:
+							return True
+						foo= self.__gameboard[row+i][col]
+					
+					#check diagonal up left 
+					foo= self.__gameboard[row][col]
+					for i in range(6):
+						if(foo!=self.__gameboard[row-i][col+i]):
+							break
+						elif i==5:
+							return True
+						foo= self.__gameboard[row-i][col+i]
+
+					#check diagonal down right
+					foo = self.__gameboard[row][col]
+					for i in range(6):
+						if(foo!=self.__gameboard[row+i][col-i]):
+							break
+						else:
+							foo = self.__gameboard[row+i][col-i]	
+				
+				except:
+					# Don't care. Never Did. Never Will.
+					pass
+
+				return False
 
 		
 				
 
 				
-	
+	# walk that walk, talk that talk, play that game!
 	def start_game(self):
 		player_turn = 0
 		# player_move[0] == move of player 0; player_move[1] == move of player 1
 		player_move = []
 
 		player_move[0] = self.__player[player_turn].get_next_move('D')
+		if(len(player_move[0])>4):
+			print "Illegal Move by Player 0 (Two tokens as first move)"
+			sys.exit(0)
+
 		self.put_token(Coord(player_move[0][0:2], player_move[0][0:2]),0)
 		player_move[1] = self.__player[player_turn].get_next_move('L'+player_move[0])
 		coords = self.parse_coords(player_move[1]
