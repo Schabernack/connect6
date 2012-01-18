@@ -51,13 +51,6 @@ class Player:
 			self.board.put_token(coord2,self.enemy)
 	
 
-'''
-'''
-'''			CHECK OTHER FREE FIELDS FOR VERTICAL ROWS!!!
-'''
-'''
-'''
-
 	def get_horizontal_rows(self):
 		
 		previous_color = ''
@@ -151,8 +144,8 @@ class Player:
 
 						## Check if previous field is free
 						if c > 0:
-							if self.board.get_board()[r][c-1] == '':
-								off_row = (off_row[0],[(r,c-1)])
+							if self.board.get_board()[r-1][c] == '':
+								off_row = (off_row[0],[(r-1,c)])
 			
 
 				## enemy field
@@ -171,8 +164,8 @@ class Player:
 						
 						## Check if previous field is free
 						if c > 0:
-							if self.board.get_board()[r][c-1] == '':
-								def_row = (def_row[0],[(r,c-1)])
+							if self.board.get_board()[r-1][c] == '':
+								def_row = (def_row[0],[(r-1,c)])
 						
 						
 				## Free field
