@@ -18,7 +18,7 @@ class Coord:
 		self.col = col 
 
 
-	def get_0prefixed_repr(self):
+	def get_0_prefixed_repr(self):
 		return self.__hash__();
 
 	def __str__(self):
