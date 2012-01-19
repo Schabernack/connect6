@@ -4,12 +4,20 @@ from gameboard import GameBoard
 from coord import Coord
 from sets import Set
 
+# for further explanation of tactic used, see
+# Wu, Zhou: Optimization of the Connect6 Classical Evaluation Function
+# Based on Threat Theory and Game Strategy (2010)
+# http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=5708721&tag=1
+
 
 class Player:
 	color = None
 	enemy = None
 	board = None
+	# datastructure (length, [list of free extensions])
+	# rows of player
 	off_rows = []
+	# rows of enemy
 	def_rows = []
 
 	def __init__(self):
@@ -36,8 +44,22 @@ class Player:
 
 		self.board.put_token(Coord(1,1),self.color)
 
-		
-
+	# live 5: just need to put one stone to form a Conn-6,
+	# but the opponent need to put two stones to prevent it
+	# forming a Conn-6.
+	# live 4: need to put two stones to form a Conn-6, also, 
+	# two stones is needed to defend.
+	# ...
+	# returns list of alive
+	def get_alive(self, length):
+		return filter(lambda live: live[0]==length and self.is_alive(live[1]), self.off_rows)
+	
+	# similar to Live-5, but only one stone can prevent from Conn-6
+	# Sleep-4, similar to Live-4, but only one stone is enough to prevent it.
+	# ...
+	# returns list of sleeping
+	def get_sleeping(self, length):
+		return filter(lambda live: live[0]==length and self.is_sleeping(live[1]), self.off_rows)
 
 	def do_best_move(self):
 		move = ""
@@ -218,6 +240,8 @@ if __name__ == "__main__":
 	print "Me"
 	for row in player.get_player_rows():
 		print row
+
+	print player.get_alive(2)
 	
 
 	
