@@ -44,28 +44,88 @@ class Player:
 
 		self.board.put_token(Coord(1,1),self.color)
 
+	
+
+
+
 	# live 5: just need to put one stone to form a Conn-6,
 	# but the opponent need to put two stones to prevent it
 	# forming a Conn-6.
 	# live 4: need to put two stones to form a Conn-6, also, 
 	# two stones is needed to defend.
 	# ...
-	# returns list of alive
-	def get_alive(self, length):
+	# returns list of my alive
+	def get_alive_off(self, length):
 		return filter(lambda live: live[0]==length and self.is_alive(live[1]), self.off_rows)
+
+	#returns a list of opponents alive
+	def get_alive_def(self, length):
+		return filter(lambda live: live[0]==length and self.is_alive(live[1]), self.def_row)
 	
 	# similar to Live-5, but only one stone can prevent from Conn-6
 	# Sleep-4, similar to Live-4, but only one stone is enough to prevent it.
 	# ...
-	# returns list of sleeping
-	def get_sleeping(self, length):
+	# returns list of my sleeping
+	def get_sleeping_off(self, length):
 		return filter(lambda live: live[0]==length and self.is_sleeping(live[1]), self.off_rows)
-
+	
+	# returns list of opponents sleeping
+	def get_sleeping_def(self, length):
+		return filter(lambda live: live[0]==length and self.is_sleeping(live[1]), self.def_rows)
+	
+	#returns 2 Coords
 	def do_best_move(self):
-		move = ""
+		# if any of our sleep/alive 4/5 exists, make a conn6
+		live5 = self.get_alive_off(5)
+		if live5
+			return self.getCoord(live5[1][0]), self.getCoord(live5[1][1]) 
+			
+		sleep5 = self.get_sleeping_off(5):
+		if sleep5:
+			self.board.put_token(sleep5[1][0], self.color)
+			return self.getCoord(sleep5[1][0]), self.get_legal_move()
 
-		return move
+		live4 = self.get_alive_off(4)
+		if live4:
+			return self.getCoord(live4[1][0]), self.getCoord(live4[1][1])
+		sleep4 = self.get_sleeping_off(4)
+		if sleep4:
+			return self.getCoord(sleep4[1][0]), self.getCoord(sleep4[1][1])
+		
+		# if enemy has sleep/alive 4/5 exists, make it dead
+		alive5 = self.get_alive_def(5)
+		if alive5:
+			return self.getCoord(alive5[1][0]), self.getCoord(alive5[1][1])
+		sleep5 = self.get_sleeping_def(5):
+			# If only one sleep 5? improve own standing, else: destroy other sleep5
+			return self.getCoord(sleep5[1][0]), self.get_legal_move()
+		alive4 = self.get_alive_def(4)
+		if alive4:
+			return self.getCoord(sleep4[1][0]), self.getCoord(alive4[1][1])
+		sleep4 = self.get_sleeping_def(4)
+		if sleep4:
+			return self.getCoord(sleep4[1][0]), self.getCoord(alive4[1][1])
+		
 
+
+		return False
+
+	def get_legal_move(self):
+		freecoord = None
+		should_i_break_or_should_i_go=False
+		for r in range(len(self.board)):
+			for c in range(len(self.board[0])):
+				if self.board[r][c]=='':
+					freecoord=Coord(r,c)
+					should_i_break_or_should_i_go=True
+					break
+			if should_i_break_or_should_i_go:
+				break
+		return freecoord
+
+	
+	def getCoord(self,tuple):
+		return Coord(tuble[0],tuple[1])
 
 	def put_enemy_stones(self,coord1,coord2=None):
 		self.board.put_token(coord1,self.enemy)
@@ -241,7 +301,7 @@ if __name__ == "__main__":
 	for row in player.get_player_rows():
 		print row
 
-	print player.get_alive(2)
+	print player.get_alive_off(2)
 	
 
 	
