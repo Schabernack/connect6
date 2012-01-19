@@ -16,8 +16,16 @@ class GameBoard:
 		
 	def print_board(self):
 		os.system(['clear','cls'][os.name == 'nt'])
-		for row in range(len(self.__board)):
-			for col in range(len(self.__board[0])):
+		print"   ",
+		for i in range(len(self.__board)):
+			print (i+1) % 10,
+		print
+		for col in range(len(self.__board)):
+			if col+1 < 10:
+				print col+1," ",
+			else:
+				print ""+str(col+1)+" ",
+			for row in range(len(self.__board[0])):
 				foo = self.__board[row][col]
 				if (foo!=''):
 					print foo,
