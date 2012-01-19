@@ -21,7 +21,15 @@ class Coord:
 	 
 
 	def get_msg_repr(self):
-		return self.__hash__();
+		if self.row >= 10:
+			r = str(self.row)
+		else:
+			r = str(0)+str(self.row)
+
+		if self.col >= 10:
+			c = str(self.col)
+		else:
+			c = str(0)+str(self.col)
 
 	def __str__(self):
 		return "("+str(self.row)+","+str(self.col)+")"
@@ -34,14 +42,6 @@ class Coord:
 
 	def __hash__(self):
 		
-		if self.row >= 10:
-			r = str(self.row)
-		else:
-			r = str(0)+str(self.row)
+		
 
-		if self.col >= 10:
-			c = str(self.col)
-		else:
-			c = str(0)+str(self.col)
-
-		return str(r+c)
+		
