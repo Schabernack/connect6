@@ -40,8 +40,3 @@ class Coord:
 	def __eq__(self,coord):
 		return True if self.row == coord.row and self.col == coord.col else False
 
-	def __hash__(self):
-		
-		
-
-		
