@@ -18,6 +18,8 @@ class Coord:
 		self.col = col 
 
 
+	def 
+
 	def get_0_prefixed_repr(self):
 		return self.__hash__();
 
@@ -42,4 +44,4 @@ class Coord:
 		else:
 			c = str(0)+str(self.col)
 
-		return int(r+c)
+		return str(r+c)
