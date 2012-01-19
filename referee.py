@@ -22,12 +22,10 @@ class Referee:
 	
 	def put_token(self, coord1, player,  coord2=None):
 		color = 'B' if player==0 else 'W'
-
-
 		if self.__gameboard.get_board()[coord1.row][coord1.col] == '':
 			self.__gameboard.get_board()[coord1.row][coord1.col]=color
 		else:
-			print "Illegal Move by Player ", player
+			print "Illegal Move by Player ", player, " ", coord1, coord2
 			sys.exit(0)
 		
 		if coord2 is not None:
@@ -94,20 +92,19 @@ class Referee:
 				
 	# walk that walk, talk that talk, play that game!
 	def start_game(self):
+
 		player_turn = 0
 		# player_move[0] == move of player 0; player_move[1] == move of player 1
-		player_move = []
+		player_move = [None]*2
 
-		player_move.append(self.__player[player_turn].get_next_move('D'))
-		print "Move1"
-		if(len(player_move[0])>4):
+		player_move[0] = (self.__player[player_turn].get_next_move('D'))
+		if(player_move[0] and len(player_move[0])>4):
 			print "Illegal Move by Player 0 (Two tokens as first move)"
 			sys.exit(0)
-		
+		print player_move[0]
 		self.put_token(Coord(player_move[0][0:2], player_move[0][2:4]),0)
 		self.__gameboard.print_board()
 		player_move[1] = self.__player[player_turn].get_next_move('L'+player_move[0])
-		print "Move1"
 		coords = self.parse_coords(player_move[1])
 		self.put_token(coords[0],1, coords[1])
 		self.__gameboard.print_board()
