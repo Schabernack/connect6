@@ -9,6 +9,10 @@ from sets import Set
 # Based on Threat Theory and Game Strategy (2010)
 # http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=5708721&tag=1
 
+HOR = 0
+VER = 1
+DRI = 2
+DLE = 3
 
 class Player:
 	color = None
@@ -19,6 +23,8 @@ class Player:
 	off_rows = []
 	# rows of enemy
 	def_rows = []
+
+	
 
 	def __init__(self):
 		self.init_boards()
@@ -77,10 +83,10 @@ class Player:
 	def do_best_move(self):
 		# if any of our sleep/alive 4/5 exists, make a conn6
 		live5 = self.get_alive_off(5)
-		if live5
+		if live5:
 			return self.getCoord(live5[1][0]), self.getCoord(live5[1][1]) 
 			
-		sleep5 = self.get_sleeping_off(5):
+		sleep5 = self.get_sleeping_off(5)
 		if sleep5:
 			self.board.put_token(sleep5[1][0], self.color)
 			return self.getCoord(sleep5[1][0]), self.get_legal_move()
@@ -89,6 +95,7 @@ class Player:
 		if live4:
 			return self.getCoord(live4[1][0]), self.getCoord(live4[1][1])
 		sleep4 = self.get_sleeping_off(4)
+		## toDo: Find next move!
 		if sleep4:
 			return self.getCoord(sleep4[1][0]), self.getCoord(sleep4[1][1])
 		
@@ -96,7 +103,8 @@ class Player:
 		alive5 = self.get_alive_def(5)
 		if alive5:
 			return self.getCoord(alive5[1][0]), self.getCoord(alive5[1][1])
-		sleep5 = self.get_sleeping_def(5):
+		sleep5 = self.get_sleeping_def(5)
+		if sleep5:
 			# If only one sleep 5? improve own standing, else: destroy other sleep5
 			return self.getCoord(sleep5[1][0]), self.get_legal_move()
 		alive4 = self.get_alive_def(4)
@@ -148,7 +156,7 @@ class Player:
 				if token == self.color:
 					## Extend self.player row
 					if previous_color == self.color:
-						off_row = (off_row[0]+1,off_row[1])
+						off_row = (off_row[0]+1,off_row[1],HOR)
 					## New self.player row
 					else:
 						## self.enemy_row disturbed?
@@ -156,19 +164,19 @@ class Player:
 							self.def_rows.append(def_row)
 							def_row = None
 
-						off_row = (1,[])
+						off_row = (1,[],HOR)
 
 						## Check if previous field is free
 						if c > 0:
 							if self.board.get_board()[r][c-1] == '':
-								off_row = (off_row[0],[(r,c-1)])
+								off_row = (off_row[0],[(r,c-1)],HOR)
 			
 
 				## enemy field
 				elif token == self.enemy:
 					## Extend self.enemy row
 					if previous_color == self.enemy:
-						def_row = (def_row[0]+1,def_row[1])
+						def_row = (def_row[0]+1,def_row[1],HOR)
 					## New self.enemy row
 					else:
 						## self.player row disturbed?
@@ -176,12 +184,12 @@ class Player:
 							self.off_rows.append(off_row)
 							off_row = None
 						
-						def_row = (1,[])
+						def_row = (1,[],HOR)
 						
 						## Check if previous field is free
 						if c > 0:
 							if self.board.get_board()[r][c-1] == '':
-								def_row = (def_row[0],[(r,c-1)])
+								def_row = (def_row[0],[(r,c-1)],HOR)
 						
 						
 				## Free field
@@ -214,7 +222,7 @@ class Player:
 				if token == self.color:
 					## Extend self.player row
 					if previous_color == self.color:
-						off_row = (off_row[0]+1,off_row[1])
+						off_row = (off_row[0]+1,off_row[1],VER)
 					## New self.player row
 					else:
 						## self.enemy_row disturbed?
@@ -227,7 +235,7 @@ class Player:
 						## Check if previous field is free
 						if c > 0:
 							if self.board.get_board()[r-1][c] == '':
-								off_row = (off_row[0],[(r-1,c)])
+								off_row = (off_row[0],[(r-1,c)],VER)
 			
 
 				## enemy field
@@ -242,12 +250,12 @@ class Player:
 							self.off_rows.append(off_row)
 							off_row = None
 						
-						def_row = (1,[])
+						def_row = (1,[],VER)
 						
 						## Check if previous field is free
 						if c > 0:
 							if self.board.get_board()[r-1][c] == '':
-								def_row = (def_row[0],[(r-1,c)])
+								def_row = (def_row[0],[(r-1,c)],VER)
 						
 						
 				## Free field
