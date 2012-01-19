@@ -15,7 +15,7 @@ class GameBoard:
 		self.__board = [['']*19 for i in range(19)]
 		
 	def print_board(self):
-		os.system(['clear','cls'][os.name == 'nt'])
+		#os.system(['clear','cls'][os.name == 'nt'])
 		for row in range(len(self.__board)):
 			for col in range(len(self.__board[0])):
 				foo = self.__board[row][col]
