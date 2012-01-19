@@ -30,6 +30,8 @@ class Coord:
 			c = str(self.col)
 		else:
 			c = str(0)+str(self.col)
+		
+		return str(r+c)
 
 	def __str__(self):
 		return "("+str(self.row)+","+str(self.col)+")"
@@ -40,3 +42,8 @@ class Coord:
 	def __eq__(self,coord):
 		return True if self.row == coord.row and self.col == coord.col else False
 
+	def __hash__(self):
+		return int("1"+self.get_msg_repr())
+		
+
+		
