@@ -16,7 +16,7 @@ class DummyAI:
 		if(msg[0:1]=='D'):
 			move = random.choice(list(self.__moves))
 			self.__moves.discard(move)			
-			return move.get_0_prefixed_repr()
+			return str(move.get_0_prefixed_repr())
 		
 		#I am Player two, this is my first move. 
 		if(msg[0:1]=='L'):
@@ -31,5 +31,5 @@ class DummyAI:
 		self.__moves.discard(move1)
 		move2 = random.choice(list(self.__moves))
 		self.__moves.discard(move2)			
-		return move1.get_0_prefixed_repr+move2.get_0_prefixed_repr
+		return str(move1.get_0_prefixed_repr+move2.get_0_prefixed_repr)
 

@@ -12,7 +12,7 @@ class Game:
 	
 	def run(self):
 		ref = Referee()
-		p1 = DummyAI()
+		p1 = Player()
 		p2 = Player()
 
 		ref.add_player(p1)
