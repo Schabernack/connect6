@@ -379,6 +379,10 @@ class Player:
 		self.get_horizontal_rows()
 		self.get_vertical_rows()
 
+		print self.def_rows
+
+	### BUG IN HORIZONTAL OR VERTICAL
+
 	def get_horizontal_rows(self):
 		
 		previous_color = ''
