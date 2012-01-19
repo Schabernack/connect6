@@ -12,8 +12,8 @@ class Game:
 	
 	def run(self):
 		ref = Referee()
-		p1 = Player()
-		p2 = Player()
+		p1 = DummyAI()
+		p2 = DummyAI()
 
 		ref.add_player(p1)
 		ref.add_player(p2)

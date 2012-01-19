@@ -41,9 +41,11 @@ class Referee:
 			sys.exit(0)
 
 	def game_over(self):
-		return False
 		for row in range(len(self.__gameboard.get_board())):
 			for col in range(len(self.__gameboard.get_board()[0])):
+				foo= self.__gameboard.get_board()[row][col]
+				if foo == '':
+					break
 				try:
 					#check horizontal
 					foo= self.__gameboard.get_board()[row][col]
@@ -69,6 +71,7 @@ class Referee:
 						if(foo!=self.__gameboard.get_board()[row-i][col+i]):
 							break
 						elif i==5:
+							print "li74"
 							return True
 						foo= self.__gameboard.get_board()[row-i][col+i]
 
@@ -114,14 +117,14 @@ class Referee:
 		while (True):
 			starttime = self.milliseconds()
 			player_move[player_turn] = self.__player[player_turn].get_next_move(player_move[self.switch_player(player_turn)])
-			self.put_token(self.parse_coords(player_move[player_turn][0]))
-			self.put_token(self.parse_coords(player_move[player_turn][1]))
+			self.put_token(self.parse_coords(player_move[player_turn])[0], player_turn)
+			self.put_token(self.parse_coords(player_move[player_turn])[1], player_turn)
 			stoptime = self.milliseconds()
-			if stoptime - starttime < 2000:
-				sleeptime = 2000 - stoptime-starttime
-				time.sleep(sleeptime/1000)
+			#if stoptime - starttime < 2000:
+			#	sleeptime = 2000 - stoptime-starttime
+			time.sleep(0.3)
 			self.__gameboard.print_board()
-			player_turn = switch_player(player_turn)
+			player_turn = self.switch_player(player_turn)
 
 	# 0->1; 1->0
 	def switch_player(self, id):
