@@ -3,6 +3,7 @@ import datetime
 from gameboard import GameBoard 
 from coord import Coord
 from sets import Set
+import random
 # for further explanation of tactic used, see
 # Wu, Zhou: Optimization of the Connect6 Classical Evaluation Function
 # Based on Threat Theory and Game Strategy (2010)
@@ -33,6 +34,7 @@ class Player:
 
 
 	def get_next_move(self,message):
+		print "Next Move for",message
 		if len(message) == 1:
 			self.color = 'D'
 			self.enemy = 'L'
@@ -42,6 +44,12 @@ class Player:
 			self.enemy = 'D'
 			coord = Coord(int(message[1:3]),int(message[3:5]))
 			self.put_enemy_stones(coord)
+			start = self.get_start_moves()
+			start.discard(coord)
+			m1 = random.choice(list(start))
+			start.discard(m1)
+			m2 = random.choice(list(start))
+			return self.get_message((m1,m2))
 		elif len(message) == 8:
 			coord1 = Coord(int(message[0:2]),int(message[2:4]))
 			coord2 = Coord(int(message[4:6]),int(message[6:8]))
@@ -49,13 +57,10 @@ class Player:
 
 		return self.get_message(self.do_best_move())
 
-	def get_message(self,coord1,coord2):
+	def get_message(self,move):
 		msg = ""
-
-		msg += coord1.get_0_prefixed_repr()
-		msg += coord2.get_0_prefixed_repr()
-
-		print msg
+		msg += move[0].get_msg_repr()
+		msg += move[1].get_msg_repr()
 
 		return msg
 		
@@ -72,7 +77,7 @@ class Player:
 
 	#returns a list of opponents alive
 	def get_alive_def(self, length):
-		return filter(lambda live: live[0]==length and self.is_alive(live[1]), self.def_row)
+		return filter(lambda live: live[0]==length and self.is_alive(live[1]), self.def_rows)
 	
 	# similar to Live-5, but only one stone can prevent from Conn-6
 	# Sleep-4, similar to Live-4, but only one stone is enough to prevent it.
@@ -87,6 +92,7 @@ class Player:
 	
 	#returns 2 Coords
 	def do_best_move(self):
+		print "Best Move!"
 		self.get_rows()
 		# if any of our sleep/alive 4/5 exists, make a conn6
 		alive5 = self.get_alive_off(5)
@@ -98,7 +104,7 @@ class Player:
 			return self.getCoord(sleep5[0][1][0]), self.get_legal_move(1)
 
 		alive4 = self.get_alive_off(4)
-		if live4:
+		if alive4:
 			return self.getCoord(alive4[0][1][0]), self.getCoord(alive4[0][1][1])
 		
 		sleep4 = self.get_sleeping_off(4)
@@ -164,6 +170,7 @@ class Player:
 	## Put enemy live2/3 to sleep
 	## ...
 	def get_improvement_move(self,count):
+		print "Defense!!!"
 		#
 		alive3 = self.get_alive_def(3)
 		if alive3:
@@ -196,7 +203,8 @@ class Player:
 	## enemy live2/3 were put to sleep
 	## remaining moves for offense
 
-	def get_offensive_move(self,count):
+	def do_offensive_move(self,count):
+		print "Offense!!!"
 		returnCount = count
 		moves = []
 		while (count > 0):
@@ -315,21 +323,29 @@ class Player:
 									moves.append(coord1)
 									count -= 1
 						if (count > 0):
-							moves.append(self.get_legal_move(count))
+							m = self.get_legal_move(count)
+							
+							moves.append(m[0])
+							moves.append(m[1])
 
-		if returnMoves == 1:
+							count = 0
+							
+
+		if returnCount == 1:
 			return moves[0]
-		elif returnMoves == 2:
+		elif returnCount == 2:
 			return moves[0],moves[1]
 
 		
 
 	def get_legal_move(self,count):
+		print "Random Move"
+
 		freecoord = []
 		should_i_break_or_should_i_go=False
-		for r in range(len(self.board)):
-			for c in range(len(self.board[0])):
-				if self.board[r][c]=='':
+		for r in range(19):
+			for c in range(19):
+				if self.board.get_board()[r][c]=='':
 					freecoord.append(Coord(r,c))
 					if (len(freecoord)==count):
 						should_i_break_or_should_i_go=True
@@ -340,6 +356,14 @@ class Player:
 			return freecoord[0]
 		elif count==2:
 			return freecoord[0],freecoord[1]
+
+	def get_start_moves(self):
+		start_moves = Set()
+		start_moves.add(Coord(10,10))
+		start_moves.add(Coord(9,9))
+		start_moves.add(Coord(10,9))
+		start_moves.add(Coord(9,10))
+		return start_moves
 
 	
 	def getCoord(self,tuple):
