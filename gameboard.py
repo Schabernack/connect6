@@ -15,16 +15,16 @@ class GameBoard:
 		self.__board = [['']*19 for i in range(19)]
 		
 	def print_board(self):
-		os.system(['clear','cls'][os.name == 'nt'])
+		#os.system(['clear','cls'][os.name == 'nt'])
 		print"   ",
 		for i in range(len(self.__board)):
-			print (i+1) % 10,
+			print i % 10,
 		print
 		for col in range(len(self.__board)):
-			if col+1 < 10:
-				print col+1," ",
+			if col < 10:
+				print col," ",
 			else:
-				print ""+str(col+1)+" ",
+				print ""+str(col)+" ",
 			for row in range(len(self.__board[0])):
 				foo = self.__board[row][col]
 				if (foo!=''):
