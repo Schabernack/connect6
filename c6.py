@@ -2,7 +2,7 @@
 "	Authors: 	Nicolas Neu & Dennis Zimmermann
 "	Date:		20. January 2012
 "
-"	Rule based KI for Connect6
+"	Rule based AI for Connect6
 "
 "	Open Issues:
 "		- Diagonal Rows
@@ -19,8 +19,8 @@ class Game:
 	
 	def run(self):
 		ref = Referee()
-		p2 = Player()
 		p1 = Player()
+		p2 = DummyAI()
 
 		ref.add_player(p1)
 		ref.add_player(p2)

@@ -1,1 +1,15 @@
-fo shizzle ma nizzle
+Authors: 	Nicolas Neu & Dennis Zimmermann
+Date:		20. January 2012
+
+Rule based AI for Connect6
+
+Open Issues:
+	- Diagonal Rows
+	- Error in referee 
+
+
+To start game against DummyAI:
+
+>>> python game.py
+
+To change players or order of players edit "game.py". First player is Black, second player is White
