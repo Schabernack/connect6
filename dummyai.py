@@ -1,3 +1,14 @@
+"""
+"	Authors: 	Nicolas Neu & Dennis Zimmermann
+"	Date:		20. January 2012
+"
+"	Rule based KI for Connect6
+"
+"	Open Issues:
+"		- Diagonal Rows
+"		- Error in referee 
+"""
+
 from sets import Set
 from coord import Coord
 import random

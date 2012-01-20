@@ -1,3 +1,14 @@
+"""
+"	Authors: 	Nicolas Neu & Dennis Zimmermann
+"	Date:		20. January 2012
+"
+"	Rule based KI for Connect6
+"
+"	Open Issues:
+"		- Diagonal Rows
+"		- Error in referee 
+"""
+
 import copy
 import os
 from sets import Set
@@ -15,7 +26,7 @@ class GameBoard:
 		self.__board = [['']*19 for i in range(19)]
 		
 	def print_board(self):
-		os.system(['clear','cls'][os.name == 'nt'])
+		#os.system(['clear','cls'][os.name == 'nt'])
 		print"   ",
 		for i in range(len(self.__board)):
 			print i % 10,

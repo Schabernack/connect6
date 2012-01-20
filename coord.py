@@ -1,3 +1,14 @@
+"""
+"	Authors: 	Nicolas Neu & Dennis Zimmermann
+"	Date:		20. January 2012
+"
+"	Rule based KI for Connect6
+"
+"	Open Issues:
+"		- Diagonal Rows
+"		- Error in referee 
+"""
+
 class Coord:
 	
 	row = None
@@ -40,7 +51,7 @@ class Coord:
 		return self.__str__()
 
 	def __eq__(self,coord):
-		return True if self.row == coord.row and self.col == coord.col else False
+		return self.row == coord.row and self.col == coord.col
 
 	def __hash__(self):
 		return int("1"+self.get_msg_repr())

@@ -1,3 +1,14 @@
+"""
+"	Authors: 	Nicolas Neu & Dennis Zimmermann
+"	Date:		20. January 2012
+"
+"	Rule based KI for Connect6
+"
+"	Open Issues:
+"		- Diagonal Rows
+"		- Error in referee 
+"""
+
 import itertools
 import datetime
 from gameboard import GameBoard 
@@ -34,7 +45,6 @@ class Player:
 
 
 	def get_next_move(self,message):
-		print "Next Move for",message
 		if len(message) == 1:
 			self.color = 'B'
 			self.enemy = 'W'
@@ -42,7 +52,6 @@ class Player:
 			self.board.put_token(coord,self.color)
 			return "0909"
 		elif len(message) == 5:
-			print "XXX"
 			self.color = 'W'
 			self.enemy = 'B'
 			coord = Coord(int(message[1:3]),int(message[3:5]))
@@ -71,9 +80,22 @@ class Player:
 
 	def get_message(self,move):
 		msg = ""
-		msg += move[0].get_msg_repr()
-		msg += move[1].get_msg_repr()
+		 
+		msg1 = move[0].get_msg_repr()
+		msg2 = move[1].get_msg_repr()
 
+		if msg2 == None:
+			msg2 = self.get_legal_move(1).get_msg_repr()
+			print "emergency random move(None)"
+		elif len(msg2) != 4:
+			msg2 = self.get_legal_move(1).get_msg_repr()
+			print "emergency random move(Len)"
+
+		if msg1 == msg2:
+			msg2 = self.get_legal_move(1).get_msg_repr()
+			print "emergency random move(Equal)"
+
+		msg = msg1+msg2
 		return msg
 		
 
@@ -334,14 +356,15 @@ class Player:
 								elif self.board.get_board()[coord1.row+1][coord1.col-1]=='':
 									moves.append(coord1)
 									count -= 1
-						if (count > 0):
+						if (count == 2):
 							m = self.get_legal_move(count)
-							
 							moves.append(m[0])
 							moves.append(m[1])
-
 							count = 0
+						elif (count ==1):
+							m = self.get_legal_move(count)
 							
+							moves.append(m)
 
 		if returnCount == 1:
 			return moves[0]
@@ -354,20 +377,19 @@ class Player:
 		print "Random Move"
 
 		freecoord = []
-		should_i_break_or_should_i_go=False
 		for r in range(19):
 			for c in range(19):
 				if self.board.get_board()[r][c]=='':
 					freecoord.append(Coord(r,c))
-					if (len(freecoord)==count):
-						should_i_break_or_should_i_go=True
-						break
-			if should_i_break_or_should_i_go:
-				break
+					
 		if count==1:
-			return freecoord[0]
+			c = random.choice(freecoord)
+			return c
 		elif count==2:
-			return freecoord[0],freecoord[1]
+			f1 = random.choice(freecoord)
+			freecoord.remove(f1)
+			f2 = random.choice(freecoord)
+			return f1,f2
 
 	def get_start_moves(self):
 		start_moves = Set()
@@ -548,7 +570,14 @@ class Player:
 
 	def get_player_rows(self):
 		return sorted(self.off_rows, key=lambda number:(number[0], len(number[1])),reverse=True)
-	
+
+	def remove_free_coord(self,coord):
+		containing_coord = filter(self.off_rows, key=lambda c:c[1].contains(coord))
+
+		for co in containing_coord:
+			containing_coord.remove(coord)
+		
+			
 
 
 		
