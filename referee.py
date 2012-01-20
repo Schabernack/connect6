@@ -107,12 +107,18 @@ class Referee:
 		print "Player 0: ", player_move[0]
 		self.put_token(Coord(int(player_move[0][0:2]),int(player_move[0][2:4])),0)
 		self.__gameboard.print_board()
+
+		player_turn = self.switch_player(player_turn)
+
+
 		player_move[1] = self.__player[player_turn].get_next_move('L'+player_move[0])
 		print "Player 1: ", player_move[1]
 		coords = self.parse_coords(player_move[1])
 		print coords
 		self.put_token(coords[0],1, coords[1])
 		self.__gameboard.print_board()
+
+		player_turn = self.switch_player(player_turn)
 
 		while (True):
 			starttime = self.milliseconds()
@@ -135,7 +141,6 @@ class Referee:
 
 	#parses string with len(string)==8; returns 2 coords
 	def parse_coords(self, coordstring):
-		print coordstring
 		return  Coord(int(coordstring[0:2]),int(coordstring[2:4])), Coord(int(coordstring[4:6]),int(coordstring[6:8]))
 
 

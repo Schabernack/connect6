@@ -36,12 +36,15 @@ class Player:
 	def get_next_move(self,message):
 		print "Next Move for",message
 		if len(message) == 1:
-			self.color = 'D'
-			self.enemy = 'L'
-			return "1010"
+			self.color = 'B'
+			self.enemy = 'W'
+			coord = Coord(9,9)
+			self.board.put_token(coord,self.color)
+			return "0909"
 		elif len(message) == 5:
-			self.color = 'L'
-			self.enemy = 'D'
+			print "XXX"
+			self.color = 'W'
+			self.enemy = 'B'
 			coord = Coord(int(message[1:3]),int(message[3:5]))
 			self.put_enemy_stones(coord)
 			start = self.get_start_moves()
@@ -49,13 +52,22 @@ class Player:
 			m1 = random.choice(list(start))
 			start.discard(m1)
 			m2 = random.choice(list(start))
+			
+			self.board.put_token(m1,self.color)
+			self.board.put_token(m2,self.color)
+
 			return self.get_message((m1,m2))
 		elif len(message) == 8:
 			coord1 = Coord(int(message[0:2]),int(message[2:4]))
 			coord2 = Coord(int(message[4:6]),int(message[6:8]))
 			self.put_enemy_stones(coord1,coord2)
+				
+			best_move = self.do_best_move()	
 
-		return self.get_message(self.do_best_move())
+			self.board.put_token(best_move[0],self.color)
+			self.board.put_token(best_move[1],self.color)
+
+			return self.get_message(best_move)
 
 	def get_message(self,move):
 		msg = ""
@@ -73,22 +85,22 @@ class Player:
 	# ...
 	# returns list of my alive
 	def get_alive_off(self, length):
-		return filter(lambda live: live[0]==length and self.is_alive(live[1]), self.off_rows)
+		return filter(lambda live: live[0]==length and self.is_alive(live), self.off_rows)
 
 	#returns a list of opponents alive
 	def get_alive_def(self, length):
-		return filter(lambda live: live[0]==length and self.is_alive(live[1]), self.def_rows)
+		return filter(lambda live: live[0]==length and self.is_alive(live), self.def_rows)
 	
 	# similar to Live-5, but only one stone can prevent from Conn-6
 	# Sleep-4, similar to Live-4, but only one stone is enough to prevent it.
 	# ...
 	# returns list of my sleeping
 	def get_sleeping_off(self, length):
-		return filter(lambda live: live[0]==length and self.is_sleeping(live[1]), self.off_rows)
+		return filter(lambda live: live[0]==length and self.is_sleeping(live), self.off_rows)
 	
 	# returns list of opponents sleeping
 	def get_sleeping_def(self, length):
-		return filter(lambda live: live[0]==length and self.is_sleeping(live[1]), self.def_rows)
+		return filter(lambda live: live[0]==length and self.is_sleeping(live), self.def_rows)
 	
 	#returns 2 Coords
 	def do_best_move(self):
@@ -115,24 +127,24 @@ class Player:
 
 				##check if win is possible otherwise check next row
 				if (direction == VER):
-					if self.board[coord1.row-1][coord1.col]=='':
+					if self.board.get_board()[coord1.row-1][coord1.col]=='':
 						return coord1, Coord(coord1.row-1)(coord1.col)
-					elif self.board[coord1.row+1][coord1.col]=='':
+					elif self.board.get_board()[coord1.row+1][coord1.col]=='':
 						return coord1, Coord(coord1.row+1)(coord1.col)
 				elif (direction == HOR):
-					if self.board[coord1.row][coord1.col-1]=='':
+					if self.board.get_board()[coord1.row][coord1.col-1]=='':
 						return coord1, Coord(coord1.row)(coord1.col-1)
-					elif self.board[coord1.row][coord1.col+1]=='':
+					elif self.board.get_board()[coord1.row][coord1.col+1]=='':
 						return coord1, Coord(coord1.row)(coord1.col+1)
 				elif (direction == DRI):
-					if self.board[coord1.row-1][coord1.col-1]=='':
+					if self.board.get_board()[coord1.row-1][coord1.col-1]=='':
 						return coord1, Coord(coord1.row-1)(coord1.col-1)
-					elif self.board[coord1.row+1][coord1.col+1]=='':
+					elif self.board.get_board()[coord1.row+1][coord1.col+1]=='':
 						return coord1, Coord(coord1.row+1)(coord1.col+1)
 				else:
-					if self.board[coord1.row-1][coord1.col+1]=='':
+					if self.board.get_board()[coord1.row-1][coord1.col+1]=='':
 						return coord1, Coord(coord1.row-1)(coord1.col+1)
-					elif self.board[coord1.row+1][coord1.col-1]=='':
+					elif self.board.get_board()[coord1.row+1][coord1.col-1]=='':
 						return coord1, Coord(coord1.row+1)(coord1.col-1)
 
 		
@@ -216,31 +228,31 @@ class Player:
 
 				##check if win is possible otherwise check next row
 				if (direction == VER):
-					if self.board[coord1.row-1][coord1.col]=='':
+					if self.board.get_board()[coord1.row-1][coord1.col]=='':
 						moves.append(coord1)
 						count -= 1
-					elif self.board[coord1.row+1][coord1.col]=='':
+					elif self.board.get_board()[coord1.row+1][coord1.col]=='':
 						moves.append(coord1)
 						count -= 1
 				elif (direction == HOR):
-					if self.board[coord1.row][coord1.col-1]=='':
+					if self.board.get_board()[coord1.row][coord1.col-1]=='':
 						moves.append(coord1)
 						count -= 1
-					elif self.board[coord1.row][coord1.col+1]=='':
+					elif self.board.get_board()[coord1.row][coord1.col+1]=='':
 						moves.append(coord1)
 						count -= 1
 				elif (direction == DRI):
-					if self.board[coord1.row-1][coord1.col-1]=='':
+					if self.board.get_board()[coord1.row-1][coord1.col-1]=='':
 						moves.append(coord1)
 						count -= 1
-					elif self.board[coord1.row+1][coord1.col+1]=='':
+					elif self.board.get_board()[coord1.row+1][coord1.col+1]=='':
 						moves.append(coord1)
 						count -= 1
 				else:
-					if self.board[coord1.row-1][coord1.col+1]=='':
+					if self.board.get_board()[coord1.row-1][coord1.col+1]=='':
 						moves.append(coord1)
 						count -= 1
-					elif self.board[coord1.row+1][coord1.col-1]=='':
+					elif self.board.get_board()[coord1.row+1][coord1.col-1]=='':
 						moves.append(coord1)
 						count -= 1
 			if (count > 0):	
@@ -252,31 +264,31 @@ class Player:
 
 					##check if win is possible otherwise check next row
 					if (direction == VER):
-						if self.board[coord1.row-1][coord1.col]=='':
+						if self.board.get_board()[coord1.row-1][coord1.col]=='':
 							moves.append(coord1)
 							count -= 1
-						elif self.board[coord1.row+1][coord1.col]=='':
+						elif self.board.get_board()[coord1.row+1][coord1.col]=='':
 							moves.append(coord1)
 							count -= 1
 					elif (direction == HOR):
-						if self.board[coord1.row][coord1.col-1]=='':
+						if self.board.get_board()[coord1.row][coord1.col-1]=='':
 							moves.append(coord1)
 							count -= 1
-						elif self.board[coord1.row][coord1.col+1]=='':
+						elif self.board.get_board()[coord1.row][coord1.col+1]=='':
 							moves.append(coord1)
 							count -= 1
 					elif (direction == DRI):
-						if self.board[coord1.row-1][coord1.col-1]=='':
+						if self.board.get_board()[coord1.row-1][coord1.col-1]=='':
 							moves.append(coord1)
 							count -= 1
-						elif self.board[coord1.row+1][coord1.col+1]=='':
+						elif self.board.get_board()[coord1.row+1][coord1.col+1]=='':
 							moves.append(coord1)
 							count -= 1
 					else:
-						if self.board[coord1.row-1][coord1.col+1]=='':
+						if self.board.get_board()[coord1.row-1][coord1.col+1]=='':
 							moves.append(coord1)
 							count -= 1
-						elif self.board[coord1.row+1][coord1.col-1]=='':
+						elif self.board.get_board()[coord1.row+1][coord1.col-1]=='':
 							moves.append(coord1)
 							count -= 1
 				if (count > 0):
@@ -295,31 +307,31 @@ class Player:
 
 							##check if win is possible otherwise check next row
 							if (direction == VER):
-								if self.board[coord1.row-1][coord1.col]=='':
+								if self.board.get_board()[coord1.row-1][coord1.col]=='':
 									moves.append(coord1)
 									count -= 1
-								elif self.board[coord1.row+1][coord1.col]=='':
+								elif self.board.get_board()[coord1.row+1][coord1.col]=='':
 									moves.append(coord1)
 									count -= 1
 							elif (direction == HOR):
-								if self.board[coord1.row][coord1.col-1]=='':
+								if self.board.get_board()[coord1.row][coord1.col-1]=='':
 									moves.append(coord1)
 									count -= 1
-								elif self.board[coord1.row][coord1.col+1]=='':
+								elif self.board.get_board()[coord1.row][coord1.col+1]=='':
 									moves.append(coord1)
 									count -= 1
 							elif (direction == DRI):
-								if self.board[coord1.row-1][coord1.col-1]=='':
+								if self.board.get_board()[coord1.row-1][coord1.col-1]=='':
 									moves.append(coord1)
 									count -= 1
-								elif self.board[coord1.row+1][coord1.col+1]=='':
+								elif self.board.get_board()[coord1.row+1][coord1.col+1]=='':
 									moves.append(coord1)
 									count -= 1
 							else:
-								if self.board[coord1.row-1][coord1.col+1]=='':
+								if self.board.get_board()[coord1.row-1][coord1.col+1]=='':
 									moves.append(coord1)
 									count -= 1
-								elif self.board[coord1.row+1][coord1.col-1]=='':
+								elif self.board.get_board()[coord1.row+1][coord1.col-1]=='':
 									moves.append(coord1)
 									count -= 1
 						if (count > 0):
@@ -363,6 +375,7 @@ class Player:
 		start_moves.add(Coord(9,9))
 		start_moves.add(Coord(10,9))
 		start_moves.add(Coord(9,10))
+
 		return start_moves
 
 	
@@ -376,10 +389,14 @@ class Player:
 	
 
 	def get_rows(self):
-		self.get_horizontal_rows()
+		self.def_rows = []
+		self.off_rows = []
+		#self.board.print_board()
 		self.get_vertical_rows()
 
-		print self.def_rows
+		self.get_horizontal_rows()
+
+
 
 	### BUG IN HORIZONTAL OR VERTICAL
 
@@ -392,13 +409,15 @@ class Player:
 
 		for r in range(19):
 			for c in range(19):
+				#print "hor@",r,c
 				token = self.board.get_board()[r][c]
 			
 				## player field
 				if token == self.color:
+					#print "me@",r,c
 					## Extend self.player row
 					if previous_color == self.color:
-						off_row = (off_row[0]+1,off_row[1],HOR)
+						off_row = (off_row[0]+1,off_row[1],VER)
 					## New self.player row
 					else:
 						## self.enemy_row disturbed?
@@ -406,19 +425,20 @@ class Player:
 							self.def_rows.append(def_row)
 							def_row = None
 
-						off_row = (1,[],HOR)
+						off_row = (1,[],VER)
 
 						## Check if previous field is free
 						if c > 0:
+							#print "free@prev",r,(c-1)
 							if self.board.get_board()[r][c-1] == '':
-								off_row = (off_row[0],[(r,c-1)],HOR)
+								off_row = (off_row[0],[(r,c-1)],VER)
 			
 
 				## enemy field
 				elif token == self.enemy:
 					## Extend self.enemy row
 					if previous_color == self.enemy:
-						def_row = (def_row[0]+1,def_row[1],HOR)
+						def_row = (def_row[0]+1,def_row[1],VER)
 					## New self.enemy row
 					else:
 						## self.player row disturbed?
@@ -426,25 +446,26 @@ class Player:
 							self.off_rows.append(off_row)
 							off_row = None
 						
-						def_row = (1,[],HOR)
+						def_row = (1,[],VER)
 						
 						## Check if previous field is free
 						if c > 0:
 							if self.board.get_board()[r][c-1] == '':
-								def_row = (def_row[0],[(r,c-1)],HOR)
+								def_row = (def_row[0],[(r,c-1)],VER)
 						
 						
 				## Free field
 				else:
 					## Any rows disturbed?
 					if off_row != None:
-							off_row[1].append((r,c))
-							self.off_rows.append(off_row)
-							off_row = None
+						#print "free@next",r,c	
+						off_row[1].append((r,c))
+						self.off_rows.append(off_row)
+						off_row = None
 					if def_row != None:
-							def_row[1].append((r,c))
-							self.def_rows.append(def_row)
-							def_row = None
+						def_row[1].append((r,c))
+						self.def_rows.append(def_row)
+						def_row = None
 
 				
 				previous_color = token
@@ -458,8 +479,7 @@ class Player:
 
 		for c in range(19):
 			for r in range(19):
-				token = self.board.get_board()[r][c]
-
+				token = self.board.get_board()[c][r]
 				## player field
 				if token == self.color:
 					## Extend self.player row
@@ -471,20 +491,18 @@ class Player:
 						if def_row != None:
 							self.def_rows.append(def_row)
 							def_row = None
-
-						off_row = (1,[])
+						off_row = (1,[],VER)
 
 						## Check if previous field is free
 						if c > 0:
 							if self.board.get_board()[r-1][c] == '':
 								off_row = (off_row[0],[(r-1,c)],VER)
-			
 
 				## enemy field
 				elif token == self.enemy:
 					## Extend self.enemy row
 					if previous_color == self.enemy:
-						def_row = (def_row[0]+1,def_row[1])
+						def_row = (def_row[0]+1,def_row[1],VER)
 					## New self.enemy row
 					else:
 						## self.player row disturbed?
@@ -504,9 +522,9 @@ class Player:
 				else:
 					## Any rows disturbed?
 					if off_row != None:
-							off_row[1].append((r,c))
-							self.off_rows.append(off_row)
-							off_row = None
+						off_row[1].append((r,c))
+						self.off_rows.append(off_row)
+						off_row = None
 					if def_row != None:
 							def_row[1].append((r,c))
 							self.def_rows.append(def_row)
